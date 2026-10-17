@@ -1,0 +1,29 @@
+name: Auto Commit Green
+
+on:
+  schedule:
+    # Berjalan otomatis setiap hari pukul 00:00 UTC
+    - cron: '0 0 * * *'
+  # Menambahkan fitur agar bisa dijalankan manual untuk tes
+  workflow_dispatch:
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Update File
+        run: |
+          echo "Update otomatis: $(date)" >> ijo.txt
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add ijo.txt
+          git commit -m "Auto update ijo.txt [skip ci]" || exit 0
+          git push
